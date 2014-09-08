@@ -1,0 +1,27 @@
+{
+    "name": "toplog/toplogger",
+    "description": "topLog's internal logging classes",
+    "keywords": ["logging"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "topLog",
+            "email": "team@toplog.io",
+            "homepage": "http://toplog.io"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "monolog/monolog": "~1.10.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "~0.9.2",
+        "phpunit/phpunit": "~4.2.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "TopLog\\Toplogger\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
