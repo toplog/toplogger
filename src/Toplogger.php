@@ -13,6 +13,7 @@ class Toplogger extends Logger
     private $hipchatEnabled;
     protected $handlers;
     private $debug;
+    private $name;
 
     public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatEnabled = false, $hipchatToken = null, $hipchatRoom = null)
     {
@@ -20,6 +21,7 @@ class Toplogger extends Logger
         $this->debug = getenv("ENV") !== "production";
 
         $this->logFile = $logFile;
+        $this->name = $name;
 
         $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
         $streamHandler->setFormatter($this->formatter());
@@ -62,7 +64,7 @@ class Toplogger extends Logger
             $room = $productionRoom;
         }
 
-        $this->hipchat = new HipChatHandler($token, $room, $name, false, 100);
+        $this->hipchat = new HipChatHandler($token, $room, $this->name, false, 100);
         $this->hipchat->setFormatter($this->formatter());
 
         array_push($this->handlers, $this->hipchat);
