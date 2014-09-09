@@ -28,12 +28,12 @@ class Toplogger extends Logger
         // Setup pushing to Hipchat if required
         if($hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
         {
-            setupHipChat($hipchatToken, $hipchatRoom);
+            $this->setupHipChat($hipchatToken, $hipchatRoom);
         }
 
         if($this->debug)
         {
-            setupDebug();
+            $this->setupDebug();
         }
 
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
