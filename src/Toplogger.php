@@ -13,7 +13,7 @@ class Toplogger extends Logger
     private $hipchatEnabled;
     protected $handlers;
     private $debug;
-    private $name;
+    protected $name;
 
     public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatEnabled = false, $hipchatToken = null, $hipchatRoom = null)
     {
