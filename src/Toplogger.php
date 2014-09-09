@@ -35,13 +35,13 @@ class Toplogger extends Logger
 
         if($this->debug)
         {
-            $this->setupDebug();
+            $this->setupDebug($hipchatEnabled);
         }
 
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
     }
 
-    private function setupDebug()
+    private function setupDebug($hipchatEnabled)
     {
         $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG);
         $debugStreamHandler->setFormatter($this->formatter());
