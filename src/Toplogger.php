@@ -24,8 +24,8 @@ class Toplogger extends Logger
         $this->debug = getenv("ENV") !== "production";
 
         //Check if the it is STANDALONE
-        $standalone = getenv("STANDALONE");
-        if ($standalone == "true")
+        $standalone = getenv("STANDALONE") === "true";
+        if ($standalone)
         {
             $hipchatEnabled = false;
         }
