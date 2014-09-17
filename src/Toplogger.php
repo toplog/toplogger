@@ -17,11 +17,18 @@ class Toplogger extends Logger
 
     public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatEnabled = false, $hipchatToken = null, $hipchatRoom = null)
     {
+        $this->logFile = $logFile;
+        $this->name = $name;
+
         // Check if the env is production, if not, turn debug mode on
         $this->debug = getenv("ENV") !== "production";
 
-        $this->logFile = $logFile;
-        $this->name = $name;
+        //Check if the it is STANDALONE
+        $standalone = getenv("STANDALONE");
+        if ($standalone == "true")
+        {
+            $hipchatEnabled = false;
+        }
 
         $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
         $streamHandler->setFormatter($this->formatter());
