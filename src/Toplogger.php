@@ -74,11 +74,11 @@ class Toplogger extends Logger
     {
         if ($this->debug)
         {
-            $formatter = new LineFormatter("%datetime% %channel% %level_name% %message% %context%\n", "[d/M/Y:h:m:s O]");
+            $formatter = new LineFormatter("%datetime% %channel% %level_name% %message% %context%\n", "[d/M/Y:h:i:s O]");
         }
         else
         {
-            $formatter = new LineFormatter("%datetime% %channel% %level_name% %message%\n", "[d/M/Y:h:m:s O]");
+            $formatter = new LineFormatter("%datetime% %channel% %level_name% %message%\n", "[d/M/Y:h:i:s O]");
         }
 
         return $formatter;
