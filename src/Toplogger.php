@@ -23,10 +23,14 @@ class Toplogger extends Logger
         // Check if the env is production, if not, turn debug mode on
         $this->debug = getenv("ENV") !== "production";
 
-        //Check if the it is STANDALONE
+        //Check if hipchat is enabled
         if (!$hipchatToken || !$hipchatRoom)
         {
-            $hipchatEnabled = false;
+            $this->hipchatEnabled = false;
+        }
+        else
+        {
+            $this->hipchatEnabled = true;
         }
 
         $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
@@ -34,14 +38,14 @@ class Toplogger extends Logger
         $this->handlers = [$streamHandler];
 
         // Setup pushing to Hipchat if required
-        if($hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
+        if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
         {
             $this->setupHipChat($hipchatToken, $hipchatRoom);
         }
 
         if($this->debug)
         {
-            $this->setupDebug($hipchatEnabled);
+            $this->setupDebug($this->hipchatEnabled);
         }
 
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
