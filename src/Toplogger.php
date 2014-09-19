@@ -15,7 +15,7 @@ class Toplogger extends Logger
     private $debug;
     protected $name;
 
-    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatEnabled = false, $hipchatToken = null, $hipchatRoom = null)
+    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatToken = null, $hipchatRoom = null)
     {
         $this->logFile = $logFile;
         $this->name = $name;
@@ -24,8 +24,7 @@ class Toplogger extends Logger
         $this->debug = getenv("ENV") !== "production";
 
         //Check if the it is STANDALONE
-        $standalone = getenv("STANDALONE") === "true";
-        if ($standalone)
+        if (!$hipchatToken || !$hipchatRoom)
         {
             $hipchatEnabled = false;
         }
@@ -64,13 +63,8 @@ class Toplogger extends Logger
         ErrorHandler::register($debugLogger);
     }
 
-    private function setupHipChat($token, $room, $productionRoom = null)
+    private function setupHipChat($token, $room)
     {
-        if (getenv("ENV") === 'production')
-        {
-            $room = $productionRoom;
-        }
-
         $this->hipchat = new HipChatHandler($token, $room, $this->name, false, 100);
         $this->hipchat->setFormatter($this->formatter());
 
