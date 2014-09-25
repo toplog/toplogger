@@ -57,15 +57,9 @@ class Toplogger extends Logger
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
-        if($debugStreamHandler === null)
-            echo "STREAM HANDLER IS NULL";
-
         if($debugStreamHandler !== null) {
             $debugLogger->pushHandler($debugStreamHandler);
         }
-
-        if($this->hipchat === null)
-            echo "HIPCHAT HANDLER IS NULL";
 
         if ($hipchatEnabled && $this->hipchat !== null)
         {
