@@ -56,10 +56,15 @@ class Toplogger extends Logger
         $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
-        $debugLogger->pushHandler($debugStreamHandler);
 
-        if ($hipchatEnabled)
+        if($debugStreamHandler !== null) {
+            var_dump($debugStreamHandler);
+            $debugLogger->pushHandler($debugStreamHandler);
+        }
+
+        if ($hipchatEnabled && $this->hipchat !== null)
         {
+            var_dump($this->hipchat);
             $debugLogger->pushHandler($this->hipchat);
         }
 
