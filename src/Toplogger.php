@@ -53,6 +53,7 @@ class Toplogger extends Logger
         }
         catch (Exception $e)
         {
+            global $fallback;
             $fallback = true;
         }
 
