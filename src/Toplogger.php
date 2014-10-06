@@ -14,6 +14,7 @@ class Toplogger extends Logger
     protected $handlers;
     private $debug;
     protected $name;
+    private $fallback;
 
     public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatToken = null, $hipchatRoom = null)
     {
@@ -53,13 +54,12 @@ class Toplogger extends Logger
         }
         catch (Exception $e)
         {
-            global $fallback;
-            $fallback = true;
+            $this->fallback = true;
         }
 
 
         //if the $streamHandler failed due to permission error, switch to syslog
-        if($fallback)
+        if($this->fallback)
         {
             $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
             $this->handlers = [$syslogHandler];
