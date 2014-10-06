@@ -33,19 +33,36 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
-        $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 777);
-        $streamHandler->setFormatter($this->formatter());
-        $this->handlers = [$streamHandler];
-
-        // Setup pushing to Hipchat if required
-        if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
+        try
         {
-            $this->setupHipChat($hipchatToken, $hipchatRoom);
+            $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 777);
+            $streamHandler->setFormatter($this->formatter());
+            $this->handlers = [$streamHandler];
+
+            // Setup pushing to Hipchat if required
+            if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
+            {
+                $this->setupHipChat($hipchatToken, $hipchatRoom);
+            }
+
+            if($this->debug)
+            {
+                $this->setupDebug($this->hipchatEnabled);
+            }
+
+        }
+        catch (Exception $e)
+        {
+            global $fallback;
+            $fallback = true;
         }
 
-        if($this->debug)
+
+        //if the $streamHandler failed due to permission error, switch to syslog
+        if($fallback)
         {
-            $this->setupDebug($this->hipchatEnabled);
+            $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
+            $this->handlers = [$syslogHandler];
         }
 
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
