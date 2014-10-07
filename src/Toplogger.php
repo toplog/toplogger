@@ -33,11 +33,13 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
+        $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
+        $streamHandler->setFormatter($this->formatter());
+
         try
         {
-            $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
-            $streamHandler->setFormatter($this->formatter());
-            $this->handlers = [$streamHandler];
+            $mockMessage = 'MOCK';
+            $streamHandler->write([$mockMessage]);
         }
         catch (\UnexpectedValueException $e) //if the $streamHandler failed due to permission error, switch to syslog
         {
@@ -45,6 +47,8 @@ class Toplogger extends Logger
             $this->handlers = [$syslogHandler];
             parent::__construct($name, $this->handlers, [new TopLogProcessor]);
         }
+
+        $this->handlers = [$streamHandler];
 
         // Setup pushing to Hipchat if required
         if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
