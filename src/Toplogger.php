@@ -37,9 +37,9 @@ class Toplogger extends Logger
         {
             $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
             $streamHandler->setFormatter($this->formatter());
-            $this->handlers = [$streamHandler]
+            $this->handlers = [$streamHandler];
         }
-        catch (\Monolog\Handler\StreamHandler\UnexpectedValueException $e) //if the $streamHandler failed due to permission error, switch to syslog
+        catch (\UnexpectedValueException $e) //if the $streamHandler failed due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
             $this->handlers = [$syslogHandler];
