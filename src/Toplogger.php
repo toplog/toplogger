@@ -35,7 +35,7 @@ class Toplogger extends Logger
 
         try
         {
-            $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 775);
+            $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
             $streamHandler->setFormatter($this->formatter());
             $this->handlers = [$streamHandler];
 
@@ -63,7 +63,7 @@ class Toplogger extends Logger
 
     private function setupDebug($hipchatEnabled)
     {
-        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 775);
+        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
