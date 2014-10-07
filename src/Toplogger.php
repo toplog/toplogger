@@ -14,7 +14,6 @@ class Toplogger extends Logger
     protected $handlers;
     private $debug;
     protected $name;
-    private $fallback;
 
     public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatToken = null, $hipchatRoom = null)
     {
@@ -36,7 +35,7 @@ class Toplogger extends Logger
 
         try
         {
-            $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 777);
+            $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 775);
             $streamHandler->setFormatter($this->formatter());
             $this->handlers = [$streamHandler];
 
@@ -51,26 +50,20 @@ class Toplogger extends Logger
                 $this->setupDebug($this->hipchatEnabled);
             }
 
-        }
-        catch (Exception $e)
-        {
-            $this->fallback = true;
-        }
+            parent::__construct($name, $this->handlers, [new TopLogProcessor]);
 
-
-        //if the $streamHandler failed due to permission error, switch to syslog
-        if($this->fallback)
+        }
+        catch (\Exception $e) //if the $streamHandler failed due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
             $this->handlers = [$syslogHandler];
+            parent::__construct($name, $this->handlers, [new TopLogProcessor]);
         }
-
-        parent::__construct($name, $this->handlers, [new TopLogProcessor]);
     }
 
     private function setupDebug($hipchatEnabled)
     {
-        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 777);
+        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 775);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
