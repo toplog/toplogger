@@ -53,7 +53,7 @@ class Toplogger extends Logger
             parent::__construct($name, $this->handlers, [new TopLogProcessor]);
 
         }
-        catch (UnexpectedValueException $e) //if the $streamHandler failed due to permission error, switch to syslog
+        catch (\Monolog\Handler\StreamHandler\UnexpectedValueException $e) //if the $streamHandler failed due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
             $this->handlers = [$syslogHandler];
