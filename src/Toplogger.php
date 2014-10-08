@@ -34,14 +34,13 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
-        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
+        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0660);
         $streamHandler->setFormatter($this->formatter());
 
         try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
             $mockMessage = 'MOCK';
             $streamHandler->write([$mockMessage]);
-            echo "this wont be executed";
             $this->handlers = [$streamHandler];
         }
         catch (\Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
@@ -49,7 +48,6 @@ class Toplogger extends Logger
             $syslogHandler = new SyslogHandler('topLog');
             $syslogHandler->setFormatter($this->formatter());
             $this->handlers = [$syslogHandler];
-            //parent::__construct($name, $this->handlers, [new TopLogProcessor]);
         }
 
         // Setup pushing to Hipchat if required
@@ -68,7 +66,7 @@ class Toplogger extends Logger
 
     private function setupDebug($hipchatEnabled)
     {
-        $debugStreamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG);
+        $debugStreamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0600);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
