@@ -9,7 +9,7 @@ class topLogStreamHandler extends StreamHandler
 		parent::__construct($stream, $level, $bubble, $filePermission, $useLocking);
 	}
 
-	protected function write(array $record)
+	public function write(array $record)
 	{
 		parent::write($record);
 	}
