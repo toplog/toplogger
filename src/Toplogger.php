@@ -34,15 +34,24 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
-        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0644);
+        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO,  true, 0644);
         $streamHandler->setFormatter($this->formatter());
 
         try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
-            $mockMessage = 'MOCK';
-            $streamHandler->write([$mockMessage]);
+            $mockMessage = array(
+            'message' => 'mock',
+            'context' => 'mock',
+            'level' => 'mock',
+            'level_name' => 'mock',
+            'channel' => 'mock',
+            'datetime' => 'mock',
+            'extra' => array('mock'),
+            );
+
+            $streamHandler->write($mockMessage);
             $this->handlers = [$streamHandler];
-        }        
+        }
         catch (\Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog');
