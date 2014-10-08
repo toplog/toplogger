@@ -104,3 +104,4 @@ class Toplogger extends Logger
 
         return $formatter;
     }
+}
