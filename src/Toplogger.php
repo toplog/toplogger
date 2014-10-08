@@ -3,8 +3,7 @@
 use Monolog\ErrorHandler;
 use Monolog\Logger;
 use Monolog\Handler\HipChatHandler;
-use Monolog\Handler\SyslogHandler;
-use TopLog\Toplogger\Handlers\topLogStreamHandler;
+use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
 
@@ -34,30 +33,9 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
-        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO,  true, 0644);
+        $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0644);
         $streamHandler->setFormatter($this->formatter());
-
-        try //Here it checks whether streamHandler can write/create the log file using a mock message
-        {
-            $mockMessage = array(
-            'message' => 'mock',
-            'context' => 'mock',
-            'level' => 'mock',
-            'level_name' => 'mock',
-            'channel' => 'mock',
-            'datetime' => 'mock',
-            'extra' => array('mock'),
-            );
-
-            $streamHandler->write($mockMessage);
-            $this->handlers = [$streamHandler];
-        }
-        catch (\Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
-        {
-            $syslogHandler = new SyslogHandler('topLog');
-            $syslogHandler->setFormatter($this->formatter());
-            $this->handlers = [$syslogHandler];
-        }
+        $this->handlers = [$streamHandler];
 
         // Setup pushing to Hipchat if required
         if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
@@ -75,7 +53,7 @@ class Toplogger extends Logger
 
     private function setupDebug($hipchatEnabled)
     {
-        $debugStreamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0644);
+        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0644);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
@@ -92,7 +70,7 @@ class Toplogger extends Logger
         ErrorHandler::register($debugLogger);
     }
 
-        private function setupHipChat($token, $room)
+    private function setupHipChat($token, $room)
     {
         $this->hipchat = new HipChatHandler($token, $room, $this->name, false, 100);
         $this->hipchat->setFormatter($this->formatter());
