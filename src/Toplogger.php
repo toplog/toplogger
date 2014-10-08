@@ -41,16 +41,16 @@ class Toplogger extends Logger
         {
             $mockMessage = 'MOCK';
             $streamHandler->write([$mockMessage]);
+            echo "this wont be executed";
+            $this->handlers = [$streamHandler];
         }
         catch (\UnexpectedValueException $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog');
             $syslogHandler->setFormatter($this->formatter());
             $this->handlers = [$syslogHandler];
-            parent::__construct($name, $this->handlers, [new TopLogProcessor]);
+            //parent::__construct($name, $this->handlers, [new TopLogProcessor]);
         }
-
-        $this->handlers = [$streamHandler];
 
         // Setup pushing to Hipchat if required
         if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)

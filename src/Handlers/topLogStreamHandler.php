@@ -11,6 +11,13 @@ class topLogStreamHandler extends StreamHandler
 
 	public function write(array $record)
 	{
-		parent::write($record);
+		try //Here it checks whether streamHandler can write/create the log file using a mock message
+	    {
+			parent::write($record);
+		}
+		catch (\UnexpectedValueException $e)
+		{
+			throw new UnexpectedValueException("StreamHandler couldn't write into log file. Permission denied.");
+		}
 	}
 }
