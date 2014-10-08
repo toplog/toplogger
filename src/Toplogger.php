@@ -3,7 +3,8 @@
 use Monolog\ErrorHandler;
 use Monolog\Logger;
 use Monolog\Handler\HipChatHandler;
-use Monolog\Handler\StreamHandler;
+//use Monolog\Handler\StreamHandler;
+use TopLog\Toplogger\Handlers\topLogStreamHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
 
@@ -33,15 +34,15 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
-        $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
+        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
         $streamHandler->setFormatter($this->formatter());
 
-        try
+        try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
             $mockMessage = 'MOCK';
             $streamHandler->write([$mockMessage]);
         }
-        catch (\UnexpectedValueException $e) //if the $streamHandler failed due to permission error, switch to syslog
+        catch (\UnexpectedValueException $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
             $this->handlers = [$syslogHandler];
@@ -66,7 +67,7 @@ class Toplogger extends Logger
 
     private function setupDebug($hipchatEnabled)
     {
-        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG);
+        $debugStreamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
