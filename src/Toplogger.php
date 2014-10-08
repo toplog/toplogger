@@ -45,7 +45,6 @@ class Toplogger extends Logger
         }        
         catch (\Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
-            echo $e;
             $syslogHandler = new SyslogHandler('topLog');
             $syslogHandler->setFormatter($this->formatter());
             $this->handlers = [$syslogHandler];
