@@ -17,7 +17,7 @@ class topLogStreamHandler extends StreamHandler
 		}
 		catch (\UnexpectedValueException $e)
 		{
-			throw new Exception("StreamHandler couldn't write into log file. Permission denied.");
+			throw new \Exception("StreamHandler couldn't write into log file. Permission denied.");
 		}
 	}
 }
