@@ -14,7 +14,3 @@ class topLogStreamHandler extends StreamHandler
 		parent::write($record);
 	}
 }
-
-
-
-

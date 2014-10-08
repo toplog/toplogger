@@ -3,7 +3,7 @@
 use Monolog\ErrorHandler;
 use Monolog\Logger;
 use Monolog\Handler\HipChatHandler;
-//use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
 use TopLog\Toplogger\Handlers\topLogStreamHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
@@ -40,7 +40,7 @@ class Toplogger extends Logger
         try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
             $mockMessage = 'MOCK';
-            $streamHandler->write([$mockMessage]);
+            $streamHandler->self::write([$mockMessage]);
         }
         catch (\UnexpectedValueException $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
