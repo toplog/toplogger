@@ -44,7 +44,7 @@ class Toplogger extends Logger
             echo "this wont be executed";
             $this->handlers = [$streamHandler];
         }
-        catch (\UnexpectedValueException $e) //if the $streamHandler fails due to permission error, switch to syslog
+        catch (Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog');
             $syslogHandler->setFormatter($this->formatter());
