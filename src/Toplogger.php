@@ -44,7 +44,8 @@ class Toplogger extends Logger
         }
         catch (\UnexpectedValueException $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
-            $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
+            $syslogHandler = new SyslogHandler('topLog');
+            $syslogHandler->setFormatter($this->formatter());
             $this->handlers = [$syslogHandler];
             parent::__construct($name, $this->handlers, [new TopLogProcessor]);
         }
