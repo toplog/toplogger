@@ -3,7 +3,8 @@
 use Monolog\ErrorHandler;
 use Monolog\Logger;
 use Monolog\Handler\HipChatHandler;
-use Monolog\Handler\StreamHandler;
+use Monolog\Handler\SyslogHandler;
+use TopLog\Toplogger\Handlers\topLogStreamHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
 
@@ -14,7 +15,6 @@ class Toplogger extends Logger
     protected $handlers;
     private $debug;
     protected $name;
-    private $fallback;
 
     public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatToken = null, $hipchatRoom = null)
     {
@@ -34,35 +34,36 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
-        try
+        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0660);
+        $streamHandler->setFormatter($this->formatter());
+
+        try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
+<<<<<<< HEAD
+            $mockMessage = 'MOCK';
+            $streamHandler->write([$mockMessage]);
+=======
             $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0660);
             $streamHandler->setFormatter($this->formatter());
+>>>>>>> origin/master
             $this->handlers = [$streamHandler];
-
-            // Setup pushing to Hipchat if required
-            if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
-            {
-                $this->setupHipChat($hipchatToken, $hipchatRoom);
-            }
-
-            if($this->debug)
-            {
-                $this->setupDebug($this->hipchatEnabled);
-            }
-
         }
-        catch (Exception $e)
+        catch (\Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
-            $this->fallback = true;
-        }
-
-
-        //if the $streamHandler failed due to permission error, switch to syslog
-        if($this->fallback)
-        {
-            $syslogHandler = new SyslogHandler('topLog app', 'topLog app');
+            $syslogHandler = new SyslogHandler('topLog');
+            $syslogHandler->setFormatter($this->formatter());
             $this->handlers = [$syslogHandler];
+        }
+
+        // Setup pushing to Hipchat if required
+        if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
+        {
+            $this->setupHipChat($hipchatToken, $hipchatRoom);
+        }
+
+        if($this->debug)
+        {
+            $this->setupDebug($this->hipchatEnabled);
         }
 
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
@@ -70,7 +71,11 @@ class Toplogger extends Logger
 
     private function setupDebug($hipchatEnabled)
     {
+<<<<<<< HEAD
+        $debugStreamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0600);
+=======
         $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0600);
+>>>>>>> origin/master
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
