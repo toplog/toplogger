@@ -15,7 +15,7 @@ class topLogStreamHandler extends StreamHandler
 	    {
 			parent::write($record);
 		}
-		catch (UnexpectedValueException $e)
+		catch (\UnexpectedValueException $e)
 		{
 			throw new Exception("StreamHandler couldn't write into log file. Permission denied.");
 		}
