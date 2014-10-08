@@ -40,7 +40,7 @@ class Toplogger extends Logger
         try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
             $mockMessage = 'MOCK';
-            $streamHandler->self::write([$mockMessage]);
+            $streamHandler->write([$mockMessage]);
         }
         catch (\UnexpectedValueException $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
