@@ -34,20 +34,15 @@ class Toplogger extends Logger
             $this->hipchatEnabled = true;
         }
 
-        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0660);
+        $streamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO);
         $streamHandler->setFormatter($this->formatter());
 
         try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
-<<<<<<< HEAD
             $mockMessage = 'MOCK';
             $streamHandler->write([$mockMessage]);
-=======
-            $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0660);
-            $streamHandler->setFormatter($this->formatter());
->>>>>>> origin/master
             $this->handlers = [$streamHandler];
-        }
+        }        
         catch (\Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
             $syslogHandler = new SyslogHandler('topLog');
@@ -71,11 +66,7 @@ class Toplogger extends Logger
 
     private function setupDebug($hipchatEnabled)
     {
-<<<<<<< HEAD
-        $debugStreamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0600);
-=======
-        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0600);
->>>>>>> origin/master
+        $debugStreamHandler = new topLogStreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
@@ -92,7 +83,7 @@ class Toplogger extends Logger
         ErrorHandler::register($debugLogger);
     }
 
-    private function setupHipChat($token, $room)
+        private function setupHipChat($token, $room)
     {
         $this->hipchat = new HipChatHandler($token, $room, $this->name, false, 100);
         $this->hipchat->setFormatter($this->formatter());
@@ -113,4 +104,3 @@ class Toplogger extends Logger
 
         return $formatter;
     }
-}
