@@ -39,12 +39,13 @@ class Toplogger extends Logger
 
         try //Here it checks whether streamHandler can write/create the log file using a mock message
         {
-            $mockMessage = 'MOCK';
-            $streamHandler->write([$mockMessage]);
+            $mockMessage = array("foo");
+            $streamHandler->write($mockMessage);
             $this->handlers = [$streamHandler];
         }        
         catch (\Exception $e) //if the $streamHandler fails due to permission error, switch to syslog
         {
+            echo $e;
             $syslogHandler = new SyslogHandler('topLog');
             $syslogHandler->setFormatter($this->formatter());
             $this->handlers = [$syslogHandler];
