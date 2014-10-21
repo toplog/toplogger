@@ -23,7 +23,7 @@ class Toplogger extends Logger
         // Check if the env is production, if not, turn debug mode on
         $this->debug = getenv("ENV") !== "production";
 
-        //Check if hipchat is enabled
+        //Check if Slack is enabled
         if (!$slackToken || !$slackChannel)
         {
             $this->slackEnabled = false;
@@ -37,7 +37,7 @@ class Toplogger extends Logger
         $streamHandler->setFormatter($this->formatter());
         $this->handlers = [$streamHandler];
 
-        // Setup pushing to Hipchat if required
+        // Setup pushing to Slack if required
         if($this->slackEnabled && $slackToken !== null && $slackChannel !== null)
         {
             $this->setupSlack($slackToken, $slackChannel);
