@@ -74,6 +74,7 @@ class Toplogger extends Logger
     {
         $this->slack = new SlackHandler($token, $room, $this->name, false, null, Logger::DEBUG);
         $this->slack->setFormatter($this->formatter());
+        echo "Slack created";
 
         array_push($this->handlers, $this->slack);
     }
