@@ -112,7 +112,7 @@ class SlackHandler extends SocketHandler
                         'fields' => array(
                             array(
                                 //'title' => 'Message',
-                                'value' => $record['level_name'].' '.$record['message'],
+                                'value' => $record['datetime'].' '.$record['channel'].' '.$record['level_name'].' '.$record['message'],
                                 'short' => false
                             )//,
                             // array(
