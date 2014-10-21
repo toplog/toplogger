@@ -10,6 +10,7 @@
  */
 
 use Monolog\Logger;
+use Monolog\Handler\SocketHandler;
 
 /**
  * Sends notifications through Slack API
