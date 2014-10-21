@@ -2,20 +2,20 @@
 
 use Monolog\ErrorHandler;
 use Monolog\Logger;
-use Monolog\Handler\HipChatHandler;
+use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
 
 class Toplogger extends Logger
 {
-    private $hipchat;
-    private $hipchatEnabled;
+    private $slack;
+    private $slackEnabled;
     protected $handlers;
     private $debug;
     protected $name;
 
-    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $hipchatToken = null, $hipchatRoom = null)
+    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $slackToken = null, $slackChannel = null)
     {
         $this->logFile = $logFile;
         $this->name = $name;
@@ -24,13 +24,13 @@ class Toplogger extends Logger
         $this->debug = getenv("ENV") !== "production";
 
         //Check if hipchat is enabled
-        if (!$hipchatToken || !$hipchatRoom)
+        if (!$slackToken || !$slackChannel)
         {
-            $this->hipchatEnabled = false;
+            $this->slackEnabled = false;
         }
         else
         {
-            $this->hipchatEnabled = true;
+            $this->slackEnabled = true;
         }
 
         $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0644);
@@ -38,20 +38,20 @@ class Toplogger extends Logger
         $this->handlers = [$streamHandler];
 
         // Setup pushing to Hipchat if required
-        if($this->hipchatEnabled && $hipchatToken !== null && $hipchatRoom !== null)
+        if($this->slackEnabled && $slackToken !== null && $slackChannel !== null)
         {
-            $this->setupHipChat($hipchatToken, $hipchatRoom);
+            $this->setupSlack($slackToken, $slackChannel);
         }
 
         if($this->debug)
         {
-            $this->setupDebug($this->hipchatEnabled);
+            $this->setupDebug($this->slackEnabled);
         }
 
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
     }
 
-    private function setupDebug($hipchatEnabled)
+    private function setupDebug($slackEnabled)
     {
         $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0644);
         $debugStreamHandler->setFormatter($this->formatter());
@@ -61,19 +61,19 @@ class Toplogger extends Logger
             $debugLogger->pushHandler($debugStreamHandler);
         }
 
-        if ($hipchatEnabled && $this->hipchat !== null)
+        if ($slackEnabled && $this->slack !== null)
         {
-            $debugLogger->pushHandler($this->hipchat);
+            $debugLogger->pushHandler($this->slack);
         }
 
         $debugLogger->pushProcessor(new TopLogProcessor);
         ErrorHandler::register($debugLogger);
     }
 
-    private function setupHipChat($token, $room)
+    private function setupSlack($token, $room)
     {
-        $this->hipchat = new HipChatHandler($token, $room, $this->name, false, 100);
-        $this->hipchat->setFormatter($this->formatter());
+        $this->slack = new SlackHandler($token, $room, $this->name, false, null, Logger::DEBUG);
+        $this->slack->setFormatter($this->formatter());
 
         array_push($this->handlers, $this->hipchat);
     }
