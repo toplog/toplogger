@@ -116,7 +116,7 @@ class SlackHandler extends SocketHandler
                         'color' => $this->getAttachmentColor($record['level']),
                         'fields' => array(
                             array(
-                                'value' => $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'].' '.$record['context'],
+                                'value' => $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'],
                                 'short' => false
                             )
                         )
