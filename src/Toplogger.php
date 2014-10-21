@@ -33,7 +33,7 @@ class Toplogger extends Logger
             $this->slackEnabled = true;
         }
 
-        $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0644);
+        $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0666);
         $streamHandler->setFormatter($this->formatter());
         $this->handlers = [$streamHandler];
 
@@ -53,7 +53,7 @@ class Toplogger extends Logger
 
     private function setupDebug($slackEnabled)
     {
-        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0644);
+        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0666);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
