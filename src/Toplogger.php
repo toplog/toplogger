@@ -2,10 +2,11 @@
 
 use Monolog\ErrorHandler;
 use Monolog\Logger;
-use Monolog\Handler\SlackHandler;
+//use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
+use TopLog\Toplogger\Handlers\SlackHandler;
 
 class Toplogger extends Logger
 {
