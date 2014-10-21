@@ -103,11 +103,22 @@ class SlackHandler extends SocketHandler
             'attachments' => array()
         );
 
-        if ($this->useAttachment) {
+        if ($this->useAttachment)
+        {
             //get the datetime object and convert it to a string
             $newDate = $record['datetime'];
             $newDate = $newDate->format('[d/M/Y:H:i:s O]');
-            
+
+            //check if it is production and change the format if necessary
+            if (getenv("ENV") === 'production')
+            {
+                $logLine = $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'];
+            }
+            else
+            {
+                $logLine = $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'].' '.$record['context'];
+            }
+
             $dataArray['attachments'] = json_encode(
                 array(
                     array(
@@ -115,24 +126,21 @@ class SlackHandler extends SocketHandler
                         'color' => $this->getAttachmentColor($record['level']),
                         'fields' => array(
                             array(
-                                //'title' => 'Message',
-                                'value' => $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'],
+                                'value' => $logLine,
                                 'short' => false
-                            )//,
-                            // array(
-                            //     'title' => 'Level',
-                            //     'value' => $record['level_name'],
-                            //     'short' => true
-                            // )
+                            )
                         )
                     )
                 )
             );
-        } else {
+        }
+        else
+        {
             $dataArray['text'] = $record['message'];
         }
 
-        if ($this->iconEmoji) {
+        if ($this->iconEmoji)
+        {
             $dataArray['icon_emoji'] = ":{$this->iconEmoji}:";
         }
 
