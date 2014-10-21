@@ -104,6 +104,9 @@ class SlackHandler extends SocketHandler
         );
 
         if ($this->useAttachment) {
+            //get the datetime object and convert it to a string
+            $newDate = DateTime::createFromFormat("l dS F Y", $record['datetime']);
+            $newDate = $newDate->format('[d/M/Y:H:i:s O]');
             $dataArray['attachments'] = json_encode(
                 array(
                     array(
@@ -112,7 +115,7 @@ class SlackHandler extends SocketHandler
                         'fields' => array(
                             array(
                                 //'title' => 'Message',
-                                'value' => $record['datetime'].' '.$record['channel'].' '.$record['level_name'].' '.$record['message'],
+                                'value' => $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'],
                                 'short' => false
                             )//,
                             // array(
