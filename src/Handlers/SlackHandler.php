@@ -105,8 +105,9 @@ class SlackHandler extends SocketHandler
 
         if ($this->useAttachment) {
             //get the datetime object and convert it to a string
-            $newDate = \DateTime::createFromFormat("l dS F Y", $record['datetime']);
+            $newDate = $record['datetime'];
             $newDate = $newDate->format('[d/M/Y:H:i:s O]');
+            
             $dataArray['attachments'] = json_encode(
                 array(
                     array(
