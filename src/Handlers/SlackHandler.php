@@ -109,16 +109,6 @@ class SlackHandler extends SocketHandler
             $newDate = $record['datetime'];
             $newDate = $newDate->format('[d/M/Y:H:i:s O]');
 
-            //check if it is production and change the format if necessary
-            if (getenv("ENV") === 'production')
-            {
-                $logLine = $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'];
-            }
-            else
-            {
-                $logLine = $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'].' '.$record['context'];
-            }
-
             $dataArray['attachments'] = json_encode(
                 array(
                     array(
@@ -126,7 +116,7 @@ class SlackHandler extends SocketHandler
                         'color' => $this->getAttachmentColor($record['level']),
                         'fields' => array(
                             array(
-                                'value' => $logLine,
+                                'value' => $newDate.' '.$record['channel'].' '.$record['level_name'].' '.$record['message'].' '.$record['context'];,
                                 'short' => false
                             )
                         )
