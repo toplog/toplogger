@@ -73,7 +73,7 @@ class Toplogger extends Logger
 
     private function setupSlack($token, $room)
     {
-        $this->slack = new SlackHandler($token, $room, $this->name, true, null, Logger::DEBUG);
+        $this->slack = new SlackHandler($token, $room, $this->name, true, null, Logger::DEBUG, false);
         //$this->slack->setFormatter($this->formatter());
         echo "Slack created";
 
