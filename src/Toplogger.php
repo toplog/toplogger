@@ -4,6 +4,7 @@ use Monolog\ErrorHandler;
 use Monolog\Logger;
 //use Monolog\Handler\SlackHandler;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\FilterHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
 use TopLog\Toplogger\Handlers\SlackHandler;
@@ -74,7 +75,11 @@ class Toplogger extends Logger
     private function setupSlack($token, $room)
     {
         $this->slack = new SlackHandler($token, $room, $this->name, true, null, Logger::DEBUG, false);
-        array_push($this->handlers, $this->slack);
+
+        //Now we are filtering the levels of logs so we are wrapping the slack handler with filterhandler
+        $filterHandler = new FilterHandler($this->slack, [200,550])        
+
+        array_push($this->handlers, $filterHandler);
     }
 
     private function formatter()
