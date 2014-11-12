@@ -58,7 +58,7 @@ class Toplogger extends Logger
     {
         $this->slack = new SlackHandler($token, $room, $this->name, true, null, Logger::DEBUG, false);
 
-        filterLevelsAndPush($this->slack, $this->slackLevels);
+        $this->filterLevelsAndPush($this->slack, $this->slackLevels);
     }
 
     private function formatter()
@@ -79,7 +79,7 @@ class Toplogger extends Logger
     {
 
         $this->handlers = [];
-        
+
         //get the env variables
 
         $this->env = getenv('ENV');
