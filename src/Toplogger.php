@@ -81,23 +81,44 @@ class Toplogger extends Logger
         $this->handlers = [];
 
         //get the env variables
-
         $this->env = getenv('ENV');
-        $this->logLevels = array_map('intval', explode(',', getenv('LOGLEVELS')));
-        $this->slackLevels = array_map('intval', explode(',', getenv('SLACKLEVELS')));
 
-        // Check if the env is production, if not, turn debug mode on
-        // debug is always on for dev and staging
-        $this->debug = $this->env !== "production";
-
-        //slack in enabled for prod and staging
-        if($this->env === "dev")
+        //default values
+        if ($this->env === "production")
         {
+             $this->debug = false;
+             $this->slackEnabled = true;
+             $this->logLevels = [200,400,550];
+             $this->slackLevels = [200,550];
+        } 
+        elseif ($this->env === "staging")
+        {
+            $this->debug = true;
+            $this->slackEnabled = true;
+            $this->logLevels = [100,200,250,300,400,500,550,600];
+            $this->slackLevels = [200,550];
+        }
+        elseif($this->env === "dev")
+        {
+            $this->debug = true;
             $this->slackEnabled = false;
+            $this->logLevels = [100,200,250,300,400,500,550,600];
+            $this->slackLevels = [];
         }
         else
         {
-            $this->slackEnabled = true;
+            exit("Environment variable is not set. (production, staging or dev)");
+        }
+
+        //override the log levels if they are specified as an env var
+        if(getenv('LOGLEVELS') !== false)
+        {
+            $this->logLevels = array_map('intval', explode(',', getenv('LOGLEVELS')));
+        }
+
+        if(getenv('LOGLEVELS') !== false)
+        {
+            $this->slackLevels = array_map('intval', explode(',', getenv('SLACKLEVELS')));
         }
 
         //if debug is enabled, setup the handler with or without slack depending on the arg passed
