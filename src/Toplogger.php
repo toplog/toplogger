@@ -77,7 +77,7 @@ class Toplogger extends Logger
         $this->slack = new SlackHandler($token, $room, $this->name, true, null, Logger::DEBUG, false);
 
         //Now we are filtering the levels of logs so we are wrapping the slack handler with filterhandler
-        $filterHandler = new FilterHandler($this->slack, [200,550])        
+        $filterHandler = new FilterHandler($this->slack, [200,550]);
 
         array_push($this->handlers, $filterHandler);
     }
