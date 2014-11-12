@@ -24,7 +24,7 @@ class Toplogger extends Logger
         $this->logFile = $logFile;
         $this->name = $name;
 
-        detectEnvAndConfig();
+        self::detectEnvAndConfig();
 
         $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0666);
         $streamHandler->setFormatter($this->formatter());
