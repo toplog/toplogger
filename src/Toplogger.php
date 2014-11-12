@@ -77,6 +77,9 @@ class Toplogger extends Logger
 
     private function detectEnvAndConfig() 
     {
+
+        $this->handlers = [];
+        
         //get the env variables
 
         $this->env = getenv('ENV');
