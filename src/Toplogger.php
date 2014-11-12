@@ -80,8 +80,8 @@ class Toplogger extends Logger
         //get the env variables
 
         $this->env = getenv('ENV');
-        $this->logLevels = getenv('LOGLEVELS');
-        $this->slackLevels = getenv('SLACKLEVELS');
+        $this->logLevels = array_map('intval', explode(',', getenv('LOGLEVELS')));
+        $this->slackLevels = array_map('intval', explode(',', getenv('SLACKLEVELS')));
 
         // Check if the env is production, if not, turn debug mode on
         // debug is always on for dev and staging
