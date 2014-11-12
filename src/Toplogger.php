@@ -37,15 +37,10 @@ class Toplogger extends Logger
             $this->setupSlack($slackToken, $slackChannel);
         }
 
-        if($this->debug)
-        {
-            $this->setupDebug($this->slackEnabled);
-        }
-
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
     }
 
-    private function setupDebug($slackEnabled)
+    private function setupDebug()
     {
         $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0666);
         $debugStreamHandler->setFormatter($this->formatter());
@@ -53,11 +48,6 @@ class Toplogger extends Logger
 
         if($debugStreamHandler !== null) {
             $debugLogger->pushHandler($debugStreamHandler);
-        }
-
-        if ($slackEnabled && $this->slack !== null)
-        {
-            $debugLogger->pushHandler($this->slack);
         }
 
         $debugLogger->pushProcessor(new TopLogProcessor);
@@ -110,7 +100,7 @@ class Toplogger extends Logger
         //if debug is enabled, setup the handler with or without slack depending on the arg passed
         if($this->debug)
         {
-            $this->setupDebug($this->slackEnabled);
+            $this->setupDebug();
         }
     }
 
