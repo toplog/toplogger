@@ -1,42 +1,35 @@
 <?php namespace TopLog\Toplogger;
 
-use Monolog\ErrorHandler;
 use Monolog\Logger;
-//use Monolog\Handler\SlackHandler;
+use Monolog\ErrorHandler;
 use Monolog\Handler\StreamHandler;
+use Monolog\Handler\FilterHandler;
 use Monolog\Formatter\LineFormatter;
 use TopLog\Toplogger\Processors\TopLogProcessor;
 use TopLog\Toplogger\Handlers\SlackHandler;
 
 class Toplogger extends Logger
 {
+    private $env;
+    private $logLevels;
+    private $slackLevels;
     private $slack;
     private $slackEnabled;
-    protected $handlers;
     private $debug;
     protected $name;
+    protected $handlers;
 
     public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $slackToken = null, $slackChannel = null)
     {
         $this->logFile = $logFile;
         $this->name = $name;
 
-        // Check if the env is production, if not, turn debug mode on
-        $this->debug = getenv("ENV") !== "production";
-
-        //Check if Slack is enabled
-        if (!$slackToken || !$slackChannel)
-        {
-            $this->slackEnabled = false;
-        }
-        else
-        {
-            $this->slackEnabled = true;
-        }
+        $this->detectEnvAndConfig();
 
         $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0666);
         $streamHandler->setFormatter($this->formatter());
-        $this->handlers = [$streamHandler];
+
+        $this->filterLevelsAndPush($streamHandler, $this->logLevels);
 
         // Setup pushing to Slack if required
         if($this->slackEnabled && $slackToken !== null && $slackChannel !== null)
@@ -44,15 +37,10 @@ class Toplogger extends Logger
             $this->setupSlack($slackToken, $slackChannel);
         }
 
-        if($this->debug)
-        {
-            $this->setupDebug($this->slackEnabled);
-        }
-
         parent::__construct($name, $this->handlers, [new TopLogProcessor]);
     }
 
-    private function setupDebug($slackEnabled)
+    private function setupDebug()
     {
         $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0666);
         $debugStreamHandler->setFormatter($this->formatter());
@@ -62,11 +50,6 @@ class Toplogger extends Logger
             $debugLogger->pushHandler($debugStreamHandler);
         }
 
-        if ($slackEnabled && $this->slack !== null)
-        {
-            $debugLogger->pushHandler($this->slack);
-        }
-
         $debugLogger->pushProcessor(new TopLogProcessor);
         ErrorHandler::register($debugLogger);
     }
@@ -74,7 +57,8 @@ class Toplogger extends Logger
     private function setupSlack($token, $room)
     {
         $this->slack = new SlackHandler($token, $room, $this->name, true, null, Logger::DEBUG, false);
-        array_push($this->handlers, $this->slack);
+
+        $this->filterLevelsAndPush($this->slack, $this->slackLevels);
     }
 
     private function formatter()
@@ -89,5 +73,66 @@ class Toplogger extends Logger
         }
 
         return $formatter;
+    }
+
+    private function detectEnvAndConfig() 
+    {
+
+        $this->handlers = [];
+
+        //get the env variables
+        $this->env = getenv('ENV');
+
+        //default values
+        if ($this->env === "production")
+        {
+             $this->debug = false;
+             $this->slackEnabled = true;
+             $this->logLevels = [200,400,550];
+             $this->slackLevels = [200,550];
+        } 
+        elseif ($this->env === "staging")
+        {
+            $this->debug = true;
+            $this->slackEnabled = true;
+            $this->logLevels = [100,200,250,300,400,500,550,600];
+            $this->slackLevels = [200,550];
+        }
+        elseif($this->env === "dev")
+        {
+            $this->debug = true;
+            $this->slackEnabled = false;
+            $this->logLevels = [100,200,250,300,400,500,550,600];
+            $this->slackLevels = [];
+        }
+        else
+        {
+            exit("Environment variable is not set. (production, staging or dev)");
+        }
+
+        //override the log levels if they are specified as an env var
+        if(getenv('LOGLEVELS') !== false)
+        {
+            $this->logLevels = array_map('intval', explode(',', getenv('LOGLEVELS')));
+        }
+
+        if(getenv('LOGLEVELS') !== false)
+        {
+            $this->slackLevels = array_map('intval', explode(',', getenv('SLACKLEVELS')));
+        }
+
+        //if debug is enabled, setup the handler with or without slack depending on the arg passed
+        if($this->debug)
+        {
+            $this->setupDebug();
+        }
+    }
+
+    private function filterLevelsAndPush($handler, $loglevels)
+    {
+        //Now we are filtering the levels of logs so we are wrapping the handler with filterhandler
+        $filterHandler = new FilterHandler($handler, $loglevels);
+
+        array_push($this->handlers, $filterHandler);
     }
 }
