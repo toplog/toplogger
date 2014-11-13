@@ -25,3 +25,29 @@ All log levels above can be used as follows addDebug(), addInfo(), addNotice(), 
 #### Sample line:
 
 ```$logger->addInfo('Very informative text', array('something' => 'something else'));```
+
+Toplogger uses different log levels and settings for different environments. At any time, environmental variable ENV should be set to one the values: production, staging or development
+
+Default settings for different environments:
+
+**Production**
+Debug disabled
+Slack enabled
+Log levels to use for writing to a file: 200,400,550
+Log levels to be sent to Slack: 200,550
+
+**Staging**
+Debug enabled
+Slack enabled
+Log levels to use for writing to a file: 100,200,250,300,400,500,550,600
+Log levels to be sent to Slack: 200,550
+
+**Production**
+Debug enabled
+Slack disabled
+Log levels to use for writing to a file: 100,200,250,300,400,500,550,600
+Log levels to be sent to Slack: null
+
+Additionaly, regardless of the environment, log levels can always be overridden using the variables: ```LOGLEVELS``` and ```SLACKLEVELS```. The log levels should be written seperated with commes WITHOUT any spaces.
+
+For example: ```LOGLEVELS=200,350,500```
