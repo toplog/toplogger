@@ -116,7 +116,7 @@ class Toplogger extends Logger
             $this->logLevels = array_map('intval', explode(',', getenv('LOGLEVELS')));
         }
 
-        if(getenv('LOGLEVELS') !== false)
+        if(getenv('SLACKLEVELS') !== false)
         {
             $this->slackLevels = array_map('intval', explode(',', getenv('SLACKLEVELS')));
         }
