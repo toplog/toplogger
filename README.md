@@ -26,9 +26,9 @@ All log levels above can be used as follows addDebug(), addInfo(), addNotice(), 
 
 ```$logger->addInfo('Very informative text', array('something' => 'something else'));```
 
-Toplogger uses different log levels and settings for different environments. At any time, environmental variable ENV should be set to one the values: production, staging or development
+Toplogger uses different log levels and settings for different environments. At any time, environmental variable ENV should be set to one of the values: production, staging or development
 
-Default settings for different environments:
+#### Default settings for different environments:
 
 **Production**
 
