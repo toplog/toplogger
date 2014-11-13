@@ -98,7 +98,7 @@ class Toplogger extends Logger
             $this->logLevels = [100,200,250,300,400,500,550,600];
             $this->slackLevels = [200,550];
         }
-        elseif($this->env === "dev")
+        elseif($this->env === "development")
         {
             $this->debug = true;
             $this->slackEnabled = false;
@@ -107,7 +107,10 @@ class Toplogger extends Logger
         }
         else
         {
-            exit("Environment variable is not set. (production, staging or dev)");
+            $this->debug = true;
+            $this->slackEnabled = false;
+            $this->logLevels = [100,200,250,300,400,500,550,600];
+            $this->slackLevels = [];
         }
 
         //override the log levels if they are specified as an env var
