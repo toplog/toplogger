@@ -4,7 +4,7 @@
 
 - Major steps (Iplom, Transform Deecompose, etc) when they start AND end should be at level **200**
 - Any steps **inside** a major step should be **250**
-- Always ask "could this log line show up a million times in a row?" If the answer is yes, log at **100** , also, try and have an **550** message just show up once when that starts to happen, if possible.
+- Always ask "could this log line show up a million times in a row?" If the answer is yes, log at an **Error (400)** level , also, try and have an **550** message just show up once when that starts to happen, if possible.
 
 #### Log Levels
 
