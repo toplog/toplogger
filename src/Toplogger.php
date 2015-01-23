@@ -19,14 +19,15 @@ class Toplogger extends Logger
     protected $name;
     protected $handlers;
 
-    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $slackToken = null, $slackChannel = null)
+    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $logDir = '/var/log/toplog/', $env = 'development', $slackToken = null, $slackChannel = null, $slackLevels = null, $loglevels = null)
     {
         $this->logFile = $logFile;
         $this->name = $name;
+        $this->env = $env;
 
         $this->detectEnvAndConfig();
 
-        $streamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $logFile, Logger::INFO, true, 0666);
+        $streamHandler = new StreamHandler($logDir . $logFile, Logger::INFO, true, 0666);
         $streamHandler->setFormatter($this->formatter());
 
         $this->filterLevelsAndPush($streamHandler, $this->logLevels);
@@ -42,7 +43,7 @@ class Toplogger extends Logger
 
     private function setupDebug()
     {
-        $debugStreamHandler = new StreamHandler(getenv('TOPLOG_LOGDIR') . $this->logFile, Logger::DEBUG, true, 0666);
+        $debugStreamHandler = new StreamHandler($this->logDir . $this->logFile, Logger::DEBUG, true, 0666);
         $debugStreamHandler->setFormatter($this->formatter());
         $debugLogger = new Logger('DEBUG');
 
@@ -80,9 +81,6 @@ class Toplogger extends Logger
 
         $this->handlers = [];
 
-        //get the env variables
-        $this->env = getenv('ENV');
-
         //default values
         if ($this->env === "production")
         {
@@ -114,14 +112,14 @@ class Toplogger extends Logger
         }
 
         //override the log levels if they are specified as an env var
-        if(getenv('LOGLEVELS') !== false)
+        if($this->logLevels !== null)
         {
-            $this->logLevels = array_map('intval', explode(',', getenv('LOGLEVELS')));
+            $this->logLevels = array_map('intval', explode(',', $this->logLevels));
         }
 
-        if(getenv('SLACKLEVELS') !== false)
+        if($this->slackLevels !== null)
         {
-            $this->slackLevels = array_map('intval', explode(',', getenv('SLACKLEVELS')));
+            $this->slackLevels = array_map('intval', explode(',', $this->slackLevels));
         }
 
         //if debug is enabled, setup the handler with or without slack depending on the arg passed
