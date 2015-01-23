@@ -24,6 +24,7 @@ class Toplogger extends Logger
         $this->logFile = $logFile;
         $this->name = $name;
         $this->env = $env;
+        $this->logDir = $logDir;
 
         $this->detectEnvAndConfig();
 
