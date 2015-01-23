@@ -114,12 +114,12 @@ class Toplogger extends Logger
         //override the log levels if they are specified as an env var
         if($this->logLevels !== null)
         {
-            $this->logLevels = array_map('intval', explode(',', $this->logLevels));
+            $this->logLevels = array_map('intval', $this->logLevels);
         }
 
         if($this->slackLevels !== null)
         {
-            $this->slackLevels = array_map('intval', explode(',', $this->slackLevels));
+            $this->slackLevels = array_map('intval', $this->slackLevels);
         }
 
         //if debug is enabled, setup the handler with or without slack depending on the arg passed
