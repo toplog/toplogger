@@ -27,6 +27,9 @@ class Toplogger extends Logger
         $this->logDir = $logDir;
 
         $this->detectEnvAndConfig();
+        $this->slackLevels = $slackLevels ?: $this->slackLevels;
+        $this->logLevels = $logLevels ?: $this->logLevels;
+
 
         $streamHandler = new StreamHandler($logDir . $logFile, Logger::INFO, true, 0666);
         $streamHandler->setFormatter($this->formatter());
@@ -77,7 +80,7 @@ class Toplogger extends Logger
         return $formatter;
     }
 
-    private function detectEnvAndConfig() 
+    private function detectEnvAndConfig()
     {
 
         $this->handlers = [];
@@ -89,7 +92,7 @@ class Toplogger extends Logger
              $this->slackEnabled = true;
              $this->logLevels = [200,400,550];
              $this->slackLevels = [200,550];
-        } 
+        }
         elseif ($this->env === "staging")
         {
             $this->debug = true;
