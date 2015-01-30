@@ -19,7 +19,7 @@ class Toplogger extends Logger
     protected $name;
     protected $handlers;
 
-    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $logDir = '/var/log/toplog/', $env = 'development', $slackToken = null, $slackChannel = null, $slackLevels = null, $loglevels = null)
+    public function __construct($name = 'TOPLOG', $logFile = 'toplog_app.log', $logDir = '/var/log/toplog/', $env = 'development', $slackToken = null, $slackChannel = null, $slackLevels = null, $logLevels = null)
     {
         $this->logFile = $logFile;
         $this->name = $name;
