@@ -27,8 +27,8 @@ class Toplogger extends Logger
         $this->logDir = $logDir;
 
         $this->detectEnvAndConfig();
-        $this->slackLevels = $slackLevels ?: $this->slackLevels;
-        $this->logLevels = $logLevels ?: $this->logLevels;
+        $this->slackLevels = empty($slackLevels) ? $slackLevels : $this->slackLevels;
+        $this->logLevels = empty($logLevels) ? $slackLevels : $this->logLevels;
 
 
         $streamHandler = new StreamHandler($logDir . $logFile, Logger::INFO, true, 0666);
