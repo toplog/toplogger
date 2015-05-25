@@ -27,9 +27,8 @@ class Toplogger extends Logger
         $this->logDir = $logDir;
 
         $this->detectEnvAndConfig();
-        $this->slackLevels = empty($slackLevels) ? $slackLevels : $this->slackLevels;
-        $this->logLevels = empty($logLevels) ? $slackLevels : $this->logLevels;
-
+        $this->slackLevels = $slackLevels ?: $this->slackLevels;
+        $this->logLevels = $logLevels ?: $this->logLevels;
 
         $streamHandler = new StreamHandler($logDir . $logFile, Logger::INFO, true, 0666);
         $streamHandler->setFormatter($this->formatter());
@@ -139,5 +138,25 @@ class Toplogger extends Logger
         $filterHandler = new FilterHandler($handler, $loglevels);
 
         array_push($this->handlers, $filterHandler);
+    }
+
+    public function setLogLevels($logLevels)
+    {
+        $this->logLevels = $logLevels;
+    }
+
+    public function getLogLevels()
+    {
+        return $this->logLevels;
+    }
+
+    public function setSlackLevels($slackLevels)
+    {
+        $this->slackLevels = $slackLevels;
+    }
+
+    public function getSlackLevels()
+    {
+        return $this->slackLevels;
     }
 }
